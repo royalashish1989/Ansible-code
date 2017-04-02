@@ -6,6 +6,21 @@
      yum:
        name: nginx
        state: latest
-
+   
+#   - name: Changing default nginx port
+#     lineinfile:
+#       path: /etc/nginx/nginx.conf
+#       regexp: '^listen'
+#       line: 'listen 9000'
+   - lineinfile: dest='/etc/nginx/nginx.conf' regexp='{{ item.regexp }}' line='{{ item.line }}'
+     with_items:
+       - { regexp: '^        listen       80 default_server;', line: '        listen       8000 default_server;'}
+       - { regexp: '^        listen       \[::\]:80 default_server;', line:  '        listen       [::]:8000 default_server;'}
+     
+      # regexp: '^        listen       80 default_server;'
+       #line: '        listen       9000 default_server;'
+       #regexp: '^listen       [::]:80 default_server;'
+       #line: 'listen       [::]:9000 default_server;'
+      # backup: yes
 #      remote_user: yourname
 #
