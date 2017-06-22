@@ -1,0 +1,2 @@
+- name: Install apache
+  yum: pkg=apache state=present
