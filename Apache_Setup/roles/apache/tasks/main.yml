@@ -1,0 +1,53 @@
+- name: Install apache
+  yum: pkg=httpd state=present
+
+#Configure Apache Security Best Practices
+
+- name: Disable Trace HTTP Request
+  lineinfile:
+    dest: /etc/httpd/conf/httpd.conf
+    regexp: '^TraceEnable'
+    line: 'TraceEnable Off'
+
+- name: Disable Server Signature to not reveal Apache version while running
+  lineinfile:
+    dest: /etc/httpd/conf/httpd.conf
+    regexp: '^ServerSignature'
+    line: 'ServerSignature Off'
+
+- name: Update ServerName
+  lineinfile:
+    dest: /etc/httpd/conf/httpd.conf
+    regexp: '^ServerName'
+    line: 'ServerName www.assignment.com:80'
+
+- name: Push SSl cert and key
+  copy:
+    src: assignment.crt
+    dest: /etc/httpd/conf/assignment.crt
+    owner: apache
+    group: apache
+  copy: 
+    src: assignment.key
+    dest: /etc/httpd/conf/assignment.key
+    owner: apache
+    group: apache
+
+- name: Push assignment.conf
+  copy:
+    src: assignment.conf
+    dest: /etc/httpd/conf/assignment.conf
+    owner: apache
+    group: apache
+
+- name: Push my own index.html. There could be set of other rules and configs to be pushed similarly.
+  copy:
+    src: index.html
+    dest: /var/www/html/index.html
+    owner: root
+    group: root
+
+- name: Restart httpd
+  service:
+    name: httpd
+    state: restarted
